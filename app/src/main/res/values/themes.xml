@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.PetCommunity" parent="android:Theme.Material.Light.NoActionBar" />
+
+
+    <style name="Theme.PetCommunity.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_screen</item>
+        <item name="postSplashScreenTheme">@style/Theme.PetCommunity</item>
+    </style>
+</resources>

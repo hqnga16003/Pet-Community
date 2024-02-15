@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "164944853417",
+    "project_id": "pet-community-ece0c",
+    "storage_bucket": "pet-community-ece0c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164944853417:android:38c2021764ed75b06e2cb8",
+        "android_client_info": {
+          "package_name": "com.example.petcommunity"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZAmzThiyjGfxwqmLHIH5El8_iVmoCtDw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
