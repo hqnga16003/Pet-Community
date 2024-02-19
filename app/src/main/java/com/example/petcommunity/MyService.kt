@@ -10,6 +10,7 @@ class MyService : Service() {
     private lateinit var player: MediaPlayer
 
 
+    // oke
     
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         player = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI)
