@@ -42,10 +42,10 @@ import com.example.petcommunity.presentation.screen.login.LoginScreen
 import com.example.petcommunity.presentation.screen.signup.SignupScreen
 
  @Composable
-fun RootNavigation(rootNavController: NavHostController, isFirst: String) {
-    Log.d("XXXXXXXX","SetupNavGraph")
+fun RootNavigation(rootNavController: NavHostController, isFirst: Boolean) {
 
-    NavHost(rootNavController, startDestination = isFirst) {
+    val startDestination = if(isFirst) "onboarding" else "register"
+    NavHost(rootNavController, startDestination = startDestination) {
 
         composable("onboarding") {
             OnboardingScreen(navigateLogin = {
@@ -58,20 +58,23 @@ fun RootNavigation(rootNavController: NavHostController, isFirst: String) {
 
         composable("login") {
             LoginScreen(navigateSignUp = {
+                rootNavController.navigate("register")
 
             }, navigateForgotPassword = {
 
             }, navigateHome = {
-                rootNavController.navigate("main") {
-                    popUpTo("login") {
-                        inclusive = true
-                    }
-                }
+                rootNavController.navigate("main")
             })
         }
 
         composable("register") {
-            SignupScreen()
+            SignupScreen(navigationLogin = {
+                rootNavController.navigate("login"){
+                    popUpTo("register") {
+                        inclusive = false
+                    }
+                }
+            })
         }
         composable("main") {
             MainNavigation()

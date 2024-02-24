@@ -82,6 +82,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-firestore")
+
     //hilt
     implementation ("com.google.dagger:hilt-android:2.50")
     annotationProcessor ("com.google.dagger:hilt-compiler:2.50")
@@ -94,6 +97,13 @@ dependencies {
 
     //splash
     implementation("androidx.core:core-splashscreen:1.1.0-alpha01")
+
+
+    //coil
+    implementation("io.coil-kt:coil-compose:2.5.0")
+    //date time picker
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
+
 
 
 

@@ -22,16 +22,30 @@ fun TextTile(title: String) {
 }
 
 @Composable
-fun TextSubTitle(title: String,color: Color,modifier: Modifier = Modifier) {
-    Text(modifier = modifier,
+fun TextSubTitle(title: String, color: Color, modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier,
         text = title,
         style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center, color = color)
     )
 }
 
+@Composable
+fun TextSubTitleWithBold(title: String, modifier: Modifier = Modifier) {
+    Text(
+        modifier = modifier,
+        text = title,
+        style = TextStyle(
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center,
+            color = Color.Black,
+            fontWeight = FontWeight.Bold
+        )
+    )
+}
 
 @Composable
-fun TextSubOnboarding(title: String,) {
+fun TextSubOnboarding(title: String) {
     Text(
         text = title,
         style = TextStyle(fontSize = 16.sp, textAlign = TextAlign.Center, color = Color.Gray)
@@ -40,7 +54,7 @@ fun TextSubOnboarding(title: String,) {
 
 
 @Composable
-fun MyTextButton(title: String,color: Color,onClick: () -> Unit) {
+fun MyTextButton(title: String, color: Color, onClick: () -> Unit) {
     TextButton(onClick = onClick) {
         Text(
             text = title,

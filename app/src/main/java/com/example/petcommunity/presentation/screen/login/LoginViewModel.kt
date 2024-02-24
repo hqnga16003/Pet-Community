@@ -1,11 +1,13 @@
 package com.example.petcommunity.presentation.screen.login
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petcommunity.data.Resource
 import com.example.petcommunity.data.AuthRepository
 import com.example.petcommunity.data.local_data.DataStoreManager
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +18,10 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(private val authRepository: AuthRepository,private val dataStoreManager: DataStoreManager) : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
+    private val dataStoreManager: DataStoreManager
+) : ViewModel() {
     private val _loginEvent = Channel<LoginUiEvent>()
     val loginEvent = _loginEvent.receiveAsFlow()
 
@@ -25,19 +30,24 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 
 
     init {
-        viewModelScope.launch {
-            dataStoreManager.getIsStayLoggedIn().collect(){
-                _loginFlowState.emit(_loginFlowState.value.copy(isStayLoggedIn = it))
-
-            }
+        viewModelScope.launch() {
+            _loginFlowState.emit(
+                _loginFlowState.value.copy(
+                    isStayLoggedIn = dataStoreManager.getStayLogged(),
+                    email = dataStoreManager.getEmail(),
+                    password = dataStoreManager.getPassword()
+                )
+            )
         }
     }
 
     fun onEvent(event: LoginUiEvent) {
         viewModelScope.launch {
+
             when (event) {
                 is LoginUiEvent.EmailChanged -> {
                     _loginFlowState.emit(_loginFlowState.value.copy(email = event.input))
+
 
                 }
 
@@ -47,7 +57,7 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
                 }
 
                 is LoginUiEvent.StayLoggedChanged -> {
-                    dataStoreManager.setIsStayLoggedIn(event.isCheck)
+                    dataStoreManager.setStayLogged(event.isCheck)
                     _loginFlowState.emit(_loginFlowState.value.copy(isStayLoggedIn = event.isCheck))
 
                 }
@@ -69,7 +79,12 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 
                 is LoginUiEvent.NavigationHome -> {
                     _loginEvent.send(LoginUiEvent.NavigationHome)
-
+                    if (_loginFlowState.value.isStayLoggedIn == true){
+                        dataStoreManager.setEmail(_loginFlowState.value.email)
+                        dataStoreManager.setPassword(_loginFlowState.value.password)
+                    }else{
+                        dataStoreManager.removeAccount()
+                    }
                 }
 
                 is LoginUiEvent.ErrorEvent -> {
@@ -122,10 +137,10 @@ class LoginViewModel @Inject constructor(private val authRepository: AuthReposit
 
 
 data class LoginUiState(
-    var email: String = "user@gmail.com",
-    var password: String = "123456",
+    var email: String = "",
+    var password: String = "",
     var loading: Boolean = false,
-    var isStayLoggedIn :Boolean? = null
+    var isStayLoggedIn: Boolean? = null
 )
 
 sealed class LoginUiEvent {

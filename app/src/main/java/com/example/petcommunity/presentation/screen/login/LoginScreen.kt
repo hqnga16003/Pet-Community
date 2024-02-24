@@ -1,5 +1,6 @@
 package com.example.petcommunity.presentation.screen.login
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +43,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,6 +60,7 @@ import com.example.petcommunity.presentation.wigdet.MyTextButton
 import com.example.petcommunity.presentation.wigdet.TextFieldInput
 import com.example.petcommunity.presentation.wigdet.TextSubTitle
 import com.example.petcommunity.presentation.wigdet.TextTile
+import com.google.firebase.auth.FirebaseAuth
 
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -82,6 +86,7 @@ fun LoginScreen(
 
                     is LoginUiEvent.NavigationSignUp -> {
                         navigateSignUp()
+
                     }
 
                     is LoginUiEvent.NavigationForgotPassword -> {
@@ -100,8 +105,7 @@ fun LoginScreen(
         }
     }
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-    Scaffold() { paddingValues ->
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -141,6 +145,7 @@ fun LoginScreen(
 
                 TextFieldInput(
                     value = uiState.value.email,
+                    modifier = Modifier.fillMaxWidth(),
                     placeholder = "Username",
                     leadingIcon = Icons.Outlined.Person,
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
@@ -150,6 +155,7 @@ fun LoginScreen(
 
                 TextFieldInput(
                     value = uiState.value.password,
+                    modifier = Modifier.fillMaxWidth(),
                     placeholder = "Password",
                     leadingIcon = Icons.Outlined.Lock,
                     keyboardOptions = KeyboardOptions(
@@ -192,37 +198,28 @@ fun LoginScreen(
                     loginViewModel.onEvent(LoginUiEvent.Login)
                 }
 
-                val annotatedString = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontSize = 16.sp, color = Color.Cyan)) {
-                        append("Not a remember? ")
-                    }
-                    withStyle(
-                        style = SpanStyle(
-                            fontSize = 16.sp,
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = "Not a remember? ",
+                        style = TextStyle(color = Color.Cyan, fontSize = 16.sp)
+                    )
+                    Text(
+                        text = "Register",
+                        style = TextStyle(
                             color = Color.Cyan,
+                            fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
-                        )
-                    ) {
-                        append("Register")
-                    }
+                        ),
+                        modifier = Modifier.clickable {
+                            loginViewModel.onEvent(LoginUiEvent.NavigationSignUp)
+                        }
+                    )
                 }
 
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontSize = 16.sp, color = Color.Cyan)) {
-                            append("Not a remember? ")
-                        }
-                        withStyle(
-                            style = SpanStyle(
-                                fontSize = 16.sp,
-                                color = Color.Cyan,
-                                fontWeight = FontWeight.Bold
-                            )
-                        ) {
-                            append("Register")
-                        }
-                    })
             }
             Image(
                 painter = painterResource(id = R.drawable.corgi_hello_logo),

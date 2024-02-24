@@ -2,65 +2,65 @@ package com.example.petcommunity.data.local_data
 
 import android.content.Context
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import java.io.IOException
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 
-class DataStoreManager @Inject constructor( context: Context) {
+class DataStoreManager @Inject constructor(context: Context) {
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "app")
     private val dataStore = context.dataStore
+    private val sharedPreferences = context.getSharedPreferences("app", Context.MODE_PRIVATE)
 
     companion object {
-        val isRunFirst = booleanPreferencesKey("isRunFirst")
-        val isStayLoggedIn = booleanPreferencesKey("isStayLoggedIn")
+    }
+
+    fun setRunFirst() {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isRunFirst", false)
+        editor.apply()
+    }
+
+    fun getRunFirst(): Boolean {
+        return sharedPreferences.getBoolean("isRunFirst", true)
+    }
+
+    fun getStayLogged(): Boolean {
+        return sharedPreferences.getBoolean("isStayLogged", false)
+    }
+
+    fun getEmail(): String {
+        return sharedPreferences.getString("email", "").toString()
+    }
+
+    fun getPassword(): String {
+        return sharedPreferences.getString("password", "").toString()
+    }
+
+    fun setEmail(email:String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("email", email)
+        editor.apply()
+    }
+
+    fun setPassword(password:String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("password", password)
+        editor.apply()
+    }
+
+    fun removeAccount(){
+        val editor = sharedPreferences.edit()
+        editor.remove("email")
+        editor.remove("password")
+        editor.apply()
 
     }
 
-    suspend fun setRunFirst() {
+    fun setStayLogged(isStayLogged: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isStayLogged", isStayLogged)
+        editor.apply()
 
-        dataStore.edit {
-            it[isRunFirst] = false
-        }
-    }
-
-
-    fun getRunFirst(): Flow<Boolean> {
-        return dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }.map { pref ->
-            val isRunFirst = pref[isRunFirst] ?: false
-            isRunFirst
-        }
-    }
-
-    suspend fun setIsStayLoggedIn(isStay:Boolean) {
-        dataStore.edit {
-            it[isStayLoggedIn] = isStay
-        }
-    }
-
-  suspend  fun getIsStayLoggedIn(): Flow<Boolean> {
-        return dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                throw exception
-            }
-        }.map { pref ->
-            val isStayLogged = pref[isStayLoggedIn] ?: false
-            isStayLogged
-        }
     }
 }

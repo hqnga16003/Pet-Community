@@ -7,11 +7,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,16 +19,16 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.app.NotificationCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petcommunity.ui.theme.PetCommunityTheme
@@ -38,136 +38,92 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.rememberNavController
 import com.example.petcommunity.data.local_data.DataStoreManager
 import com.example.petcommunity.presentation.RootNavigation
+import com.google.firebase.auth.FirebaseAuth
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
     @Inject
-    lateinit var viewModel: MyViewModel
-
+    lateinit var viewModel: SplashViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
+        FirebaseAuth.getInstance().firebaseAuthSettings.setAppVerificationDisabledForTesting(true)
         setContent {
             PetCommunityTheme {
-                val rootNavController = rememberNavController()
-                val screen by viewModel.startDestination
+                val lifecycleOwner = LocalLifecycleOwner.current
+                val intent = Intent(this, MyService::class.java)
 
-                RootNavigation(rootNavController, viewModel.startDestination.value)
+                val coroutine = rememberCoroutineScope()
+                val context = LocalContext.current
+                lifecycleOwner.lifecycle.addObserver(MyObserver(coroutine, context, startService = {
+                    startService(intent)
+                }))
+                val rootNavController = rememberNavController()
+                RootNavigation(rootNavController, viewModel.isFirst)
             }
         }
-
     }
 }
 
-class MyViewModel @Inject constructor(dataStoreManager: DataStoreManager) : ViewModel() {
-    private val _startDestination: MutableState<String> = mutableStateOf("onboarding")
-    val startDestination: State<String> = _startDestination
+class MyObserver(
+    val coroutine: CoroutineScope,
+    val context: Context,
+    val startService: () -> Unit
+) : DefaultLifecycleObserver {
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+    }
+    override fun onDestroy(owner: LifecycleOwner) {
+
+
+//        GlobalScope.launch(Dispatchers.IO) {
+//           // startService()
+//            repeat(1000){
+//                Log.d("XXX",it.toString())
+//                Toast.makeText(context,it.toString(),Toast.LENGTH_SHORT).show()
+//                delay(2000)
+//            }
+//
+//        }
+        super.onDestroy(owner)
+
+    }
+
+
+    override fun onPause(owner: LifecycleOwner) {
+        super.onPause(owner)
+
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        super.onResume(owner)
+
+    }
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+    }
+}
+
+class SplashViewModel @Inject constructor(dataStoreManager: DataStoreManager) : ViewModel() {
+    var isFirst = true
 
     init {
-        viewModelScope.launch(Dispatchers.Main) {
-            dataStoreManager.getRunFirst().collect { completed ->
-
-                if (completed) {
-                    _startDestination.value = "onboarding"
-                } else {
-                    _startDestination.value = "login"
-
-                }
-                Log.d("XXX", completed.toString())
-            }
-        }
-    }
-}
-
-@Composable
-fun Test() {
-    val testViewModel = hiltViewModel<TestViewModel>()
-    val uiState = testViewModel.uiState.collectAsState()
-    val context = LocalContext.current
-    val activity = LocalContext.current as Activity
-
-
-    val launcher =
-        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(),
-            onResult = {
-
-                if (it) {
-                    Log.d("XXXX", "oke")
-                } else {
-                    Log.d("XXXX", "not oke")
-
-                }
-            })
-
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = {
-
-//            launcher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-            val intent = Intent(context, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            val pendingIntent: PendingIntent =
-                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-
-            val notificationManager =
-                context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            val builder = NotificationCompat.Builder(context, "channel 1")
-                .setSmallIcon(R.drawable.corgi_hello_logo).setContentTitle("Hello")
-                .setContentText("Hello word").setStyle(
-                    NotificationCompat.BigTextStyle().bigText("AAAA")
-                ).setContentIntent(pendingIntent)
-
-                .setAutoCancel(true).setPriority(NotificationCompat.PRIORITY_DEFAULT).build()
-
-
-            notificationManager.notify(1, builder)
-
-//
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                val name = "channel1"
-//                val descriptionText = "descriptionText channel1"
-//                val importance = NotificationManager.IMPORTANCE_DEFAULT
-//                val channel = NotificationChannel("channel 1", name, importance).apply {
-//                    description = descriptionText
-//                }
-//                val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//                notificationManager.createNotificationChannel(channel)
-//
-//            }
-
-
-        }) {}
-    }) {
-        Box(
-            modifier = Modifier
-                .padding(it)
-                .fillMaxSize(), contentAlignment = Alignment.Center
-        ) {
-            Text(text = uiState.value.toString())
-
-        }
-    }
-}
-
-@HiltViewModel
-class TestViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow(0)
-    val uiState = _uiState.asStateFlow()
-
-    fun test() {
-        viewModelScope.launch {
-            _uiState.emit(_uiState.value + 1)
-        }
+        isFirst = dataStoreManager.getRunFirst()
     }
 }
 

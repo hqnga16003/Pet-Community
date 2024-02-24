@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
 import com.example.petcommunity.MyService
 import com.example.petcommunity.presentation.BottomNavigationItem
 import com.google.firebase.auth.FirebaseAuth
@@ -50,20 +51,19 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun HomeScreen(homeViewModel: HomeViewModel) {
 
-    Scaffold(floatingActionButton = {
-        FloatingActionButton(onClick = {
-
-        }) {
-
-        }
-    }) { paddingValues ->
+    Scaffold { paddingValues ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues = paddingValues), contentAlignment = Alignment.Center
         ) {
 
-            Button(onClick = {    FirebaseAuth.getInstance().signOut() }) {
+
+            AsyncImage(
+                model = FirebaseAuth.getInstance().currentUser?.photoUrl,
+                contentDescription = "",
+            )
+            Button(onClick = { FirebaseAuth.getInstance().signOut() }) {
 
             }
         }

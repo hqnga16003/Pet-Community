@@ -36,6 +36,10 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun test() {
+       val run = runCatching {
+
+        }
+
         list.clear()
         list.addAll(listOf(1,2,3,4,5,6))
     }

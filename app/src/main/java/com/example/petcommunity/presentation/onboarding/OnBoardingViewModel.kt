@@ -1,13 +1,10 @@
 package com.example.petcommunity.presentation.onboarding
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petcommunity.data.local_data.DataStoreManager
-import com.example.petcommunity.presentation.screen.login.LoginUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -33,7 +30,7 @@ class OnBoardingViewModel @Inject constructor(private val dataStoreManager: Data
                 }
 
             }
-            setRunFirst()
+           dataStoreManager.setRunFirst()
         }
     }
 
@@ -42,6 +39,9 @@ class OnBoardingViewModel @Inject constructor(private val dataStoreManager: Data
         viewModelScope.launch {
             dataStoreManager.setRunFirst()
         }
+
+
+
     }
 
 
