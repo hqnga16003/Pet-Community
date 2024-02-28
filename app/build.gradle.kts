@@ -1,46 +1,33 @@
+
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
-    id("com.google.gms.google-services")
+    id("pet-community-android-application")
+    id("hilt-convention-plugin")
+    alias(libs.plugins.googleServices)
 }
 
 android {
     namespace = "com.example.petcommunity"
-    compileSdk = 34
-
+    signingConfigs{
+        create("config"){
+            keyAlias = "key"
+            keyPassword = "123456"
+            storeFile = rootProject.file("key.jks")
+            storePassword = "123456"
+        }
+    }
     defaultConfig {
         applicationId = "com.example.petcommunity"
-        minSdk = 24
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         compileSdkPreview = "UpsideDownCake"
-
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
+        signingConfig = signingConfigs.getByName("debug")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
     buildFeatures {
         compose = true
     }
@@ -56,61 +43,43 @@ android {
 
 dependencies {
 
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.ui.material3)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.manifest)
 
     //navigation
-    val nav_version = "2.5.3"
-    implementation("androidx.navigation:navigation-compose:$nav_version")
+    implementation(libs.androidx.navigation.compose)
 
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-storage")
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(platform(libs.com.google.firebase.bom))
+    implementation(libs.com.google.firebase.auth)
+    implementation(libs.com.google.firebase.storage)
+    implementation(libs.com.google.firebase.firestore)
 
     //hilt
-    implementation ("com.google.dagger:hilt-android:2.50")
-    annotationProcessor ("com.google.dagger:hilt-compiler:2.50")
-    kapt("com.google.dagger:hilt-android-compiler:2.50")
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    implementation (libs.hilt.android)
+    annotationProcessor (libs.hilt.compiler)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
     // datastore
-    implementation("androidx.datastore:datastore-preferences:1.0.0")
-
-
+    implementation(libs.androidx.datastore.preferences)
 
     //splash
-    implementation("androidx.core:core-splashscreen:1.1.0-alpha01")
-
-
+    implementation(libs.androidx.core.splashscreen)
     //coil
-    implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation(libs.coil.compose)
     //date time picker
-    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.9.0")
-
-
-
-
-
-
-}
-kapt {
-    correctErrorTypes = true
-
+    implementation (libs.datetime)
 }

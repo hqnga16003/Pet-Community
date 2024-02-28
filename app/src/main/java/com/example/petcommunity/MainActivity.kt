@@ -56,69 +56,14 @@ class MainActivity : ComponentActivity() {
     lateinit var viewModel: SplashViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FirebaseAuth.getInstance().firebaseAuthSettings.setAppVerificationDisabledForTesting(true)
         setContent {
             PetCommunityTheme {
-                val lifecycleOwner = LocalLifecycleOwner.current
-                val intent = Intent(this, MyService::class.java)
-
-                val coroutine = rememberCoroutineScope()
-                val context = LocalContext.current
-                lifecycleOwner.lifecycle.addObserver(MyObserver(coroutine, context, startService = {
-                    startService(intent)
-                }))
                 val rootNavController = rememberNavController()
                 RootNavigation(rootNavController, viewModel.isFirst)
             }
         }
     }
 }
-
-class MyObserver(
-    val coroutine: CoroutineScope,
-    val context: Context,
-    val startService: () -> Unit
-) : DefaultLifecycleObserver {
-    override fun onCreate(owner: LifecycleOwner) {
-        super.onCreate(owner)
-    }
-    override fun onDestroy(owner: LifecycleOwner) {
-
-
-//        GlobalScope.launch(Dispatchers.IO) {
-//           // startService()
-//            repeat(1000){
-//                Log.d("XXX",it.toString())
-//                Toast.makeText(context,it.toString(),Toast.LENGTH_SHORT).show()
-//                delay(2000)
-//            }
-//
-//        }
-        super.onDestroy(owner)
-
-    }
-
-
-    override fun onPause(owner: LifecycleOwner) {
-        super.onPause(owner)
-
-    }
-
-    override fun onResume(owner: LifecycleOwner) {
-        super.onResume(owner)
-
-    }
-
-    override fun onStart(owner: LifecycleOwner) {
-        super.onStart(owner)
-
-    }
-
-    override fun onStop(owner: LifecycleOwner) {
-        super.onStop(owner)
-    }
-}
-
 class SplashViewModel @Inject constructor(dataStoreManager: DataStoreManager) : ViewModel() {
     var isFirst = true
 
@@ -126,4 +71,3 @@ class SplashViewModel @Inject constructor(dataStoreManager: DataStoreManager) : 
         isFirst = dataStoreManager.getRunFirst()
     }
 }
-

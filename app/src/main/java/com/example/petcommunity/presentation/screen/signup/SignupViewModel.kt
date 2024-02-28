@@ -3,6 +3,7 @@ package com.example.petcommunity.presentation.screen.signup
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.petcommunity.data.AuthRepository
@@ -269,7 +270,9 @@ class SignupViewModel @Inject constructor(
                 }
 
                 override fun onVerificationFailed(e: FirebaseException) {
+                    Log.d("XXXX",e.message.toString())
                 }
+
 
                 override fun onCodeSent(
                     verificationId: String, token: PhoneAuthProvider.ForceResendingToken

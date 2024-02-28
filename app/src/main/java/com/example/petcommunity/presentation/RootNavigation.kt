@@ -44,7 +44,7 @@ import com.example.petcommunity.presentation.screen.signup.SignupScreen
  @Composable
 fun RootNavigation(rootNavController: NavHostController, isFirst: Boolean) {
 
-    val startDestination = if(isFirst) "onboarding" else "register"
+    val startDestination = if(isFirst) "onboarding" else "login"
     NavHost(rootNavController, startDestination = startDestination) {
 
         composable("onboarding") {
@@ -63,7 +63,11 @@ fun RootNavigation(rootNavController: NavHostController, isFirst: Boolean) {
             }, navigateForgotPassword = {
 
             }, navigateHome = {
-                rootNavController.navigate("main")
+                rootNavController.navigate("main"){
+                    popUpTo("login") {
+                        inclusive = true
+                    }
+                }
             })
         }
 
