@@ -16,4 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "PetCommunity"
 include(":app")
-include(":auth-datasoruce")
+include(":feature:login")
+include(":data:auth")
+include(":data:local")
+include(":feature:wigdet")
