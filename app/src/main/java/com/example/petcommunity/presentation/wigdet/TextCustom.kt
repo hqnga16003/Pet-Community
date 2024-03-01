@@ -11,9 +11,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun TextTile(title: String) {
+fun TextTile(title: String,modifier: Modifier = Modifier) {
     Text(
         text = title,
+        modifier = modifier,
         style = TextStyle(
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
